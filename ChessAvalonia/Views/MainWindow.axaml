@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ChessAvalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        
         Icon="/Assets/avalonia-logo.ico"
         Title="ChessAvalonia">
 
@@ -21,10 +22,12 @@
         <!-- Set the DataTemplate -->
         <ItemsControl.ItemTemplate>
             <DataTemplate DataType="vm:BoardSquareViewModel">
-                <PathIcon Background="{Binding color}" 
-                          Data="{StaticResource pawn}"
+                <PathIcon Background="{Binding Color}" 
+                          Foreground="{Binding  PieceColor}"
+                          Data="{Binding Piece }"
                            Width="50"
-                           Height="50"/>
+                           Height="50">
+                </PathIcon>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
         

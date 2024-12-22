@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:ChessAvalonia.ViewModels"
              x:DataType="vm:BoardSquareViewModel">
     <StackPanel>
-        <Panel Background="{Binding color}" Width="200" Height="200">
+        <Panel Background="{Binding Color}" Width="200" Height="200">
         </Panel>
     </StackPanel>
 </UserControl>
