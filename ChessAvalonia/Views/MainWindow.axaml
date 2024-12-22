@@ -14,7 +14,26 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    
+    <ItemsControl ItemsSource="{Binding BoardSquares}"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+        <!-- Set the DataTemplate -->
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:BoardSquareViewModel">
+                <PathIcon Background="{Binding color}" 
+                          Data="{StaticResource pawn}"
+                           Width="50"
+                           Height="50"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        
+        <!-- Use a custom ItemsPanel to get 8 items in a row -->
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid Columns="8" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
 
 </Window>
