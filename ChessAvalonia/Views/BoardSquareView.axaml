@@ -6,7 +6,6 @@
              x:Class="ChessAvalonia.Views.BoardSquareView"
              xmlns:vm="clr-namespace:ChessAvalonia.ViewModels"
              x:DataType="vm:BoardSquareViewModel">
-    <Button Command="{Binding  Domove}">
         <PathIcon Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" 
                   Foreground="{Binding  PieceColor}"
                   Data="{Binding Piece }"
@@ -14,5 +13,4 @@
                   Height="50"
                   x:CompileBindings="True">
         </PathIcon>
-    </Button>
 </UserControl>

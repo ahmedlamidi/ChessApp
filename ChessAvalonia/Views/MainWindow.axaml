@@ -17,25 +17,27 @@
     </Design.DataContext>
     
     <StackPanel>
-    <ItemsControl Name = "Control" ItemsSource="{Binding BoardSquares}"
+    <ListBox ItemsSource="{Binding BoardSquares}"
+                SelectedItem="{Binding SelectedSquare}"
                   
+                  Padding="0"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
 
         <!-- Set the DataTemplate -->
-        <ItemsControl.ItemTemplate>
+        <ListBox.ItemTemplate>
             <DataTemplate DataType="vm:BoardSquareViewModel">
                     <views:BoardSquareView></views:BoardSquareView>
             </DataTemplate>
-        </ItemsControl.ItemTemplate>
+        </ListBox.ItemTemplate>
         
         <!-- Use a custom ItemsPanel to get 8 items in a row -->
-        <ItemsControl.ItemsPanel>
+        <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
                 <UniformGrid Columns="8" />
             </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-    </ItemsControl>
+        </ListBox.ItemsPanel>
+    </ListBox>
         
         <Button Command="{Binding ShowNext}"></Button>
     </StackPanel>
