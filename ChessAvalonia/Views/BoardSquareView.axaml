@@ -6,8 +6,13 @@
              x:Class="ChessAvalonia.Views.BoardSquareView"
              xmlns:vm="clr-namespace:ChessAvalonia.ViewModels"
              x:DataType="vm:BoardSquareViewModel">
-    <StackPanel>
-        <Panel Background="{Binding Color}" Width="200" Height="200">
-        </Panel>
-    </StackPanel>
+    <Button Command="{Binding  Domove}">
+        <PathIcon Background="{Binding Color}" 
+                  Foreground="{Binding  PieceColor}"
+                  Data="{Binding Piece }"
+                  Width="50"
+                  Height="50"
+                  x:CompileBindings="True">
+        </PathIcon>
+    </Button>
 </UserControl>

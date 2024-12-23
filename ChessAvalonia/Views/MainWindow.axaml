@@ -3,10 +3,10 @@
         xmlns:vm="using:ChessAvalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:ChessAvalonia.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ChessAvalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        
         Icon="/Assets/avalonia-logo.ico"
         Title="ChessAvalonia">
 
@@ -16,18 +16,16 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <ItemsControl ItemsSource="{Binding BoardSquares}"
+    <StackPanel>
+    <ItemsControl Name = "Control" ItemsSource="{Binding BoardSquares}"
+                  
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
+
         <!-- Set the DataTemplate -->
         <ItemsControl.ItemTemplate>
             <DataTemplate DataType="vm:BoardSquareViewModel">
-                <PathIcon Background="{Binding Color}" 
-                          Foreground="{Binding  PieceColor}"
-                          Data="{Binding Piece }"
-                           Width="50"
-                           Height="50">
-                </PathIcon>
+                    <views:BoardSquareView></views:BoardSquareView>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
         
@@ -38,5 +36,8 @@
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
     </ItemsControl>
+        
+        <Button Command="{Binding ShowNext}"></Button>
+    </StackPanel>
 
 </Window>
