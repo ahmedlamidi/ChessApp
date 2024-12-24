@@ -19,10 +19,10 @@ public class BoardSquareViewModel:ReactiveObject
     public int Col { get; set; }
 
     private string _color;
+    private Object? _piece;
+    private string _pieceColor;
     
     public string? PieceType {get; set;}
-
-    private readonly Action action;
     
     public string Color
     {
@@ -33,38 +33,35 @@ public class BoardSquareViewModel:ReactiveObject
         }
     }
 
-    public string PieceColor { get; set; }
-    public object? Piece { get; set; }
+    public string PieceColor { 
+        get => _pieceColor;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _pieceColor, value);
+        }
+    }
+    public object? Piece { 
+        get => _piece;
+        set {
+            this.RaiseAndSetIfChanged(ref _piece, value);
+        }
+        
+    }
     
     public bool CanMove { get; set; }
     
 
-    public ReactiveCommand<Unit, Unit> Domove { get; }
-    
-    private void ChangeColor()
+    public BoardSquareViewModel(int row, int col, string color, string peice_color, string piece, bool can_domove)
     {
-        if (CanMove)
-        {
-            Color = "Green";
-            action.Invoke();
-        }
-        // Change the color or perform other logic
-        
-    }
-
-    public BoardSquareViewModel(int _row, int _col, string color, string _peice_color, string _piece, Action _action, bool can_domove)
-    {
-        Row = _row;
-        Col = _col; 
+        Row = row;
+        Col = col; 
         _color = color;
-        PieceColor = _peice_color;
-        action = _action;
-        Domove = ReactiveCommand.Create(ChangeColor);
+        _pieceColor = peice_color;
         CanMove = can_domove;
         try
         {
-            if (Application.Current != null) Piece = Application.Current.FindResource(_piece);
-            PieceType = _piece;
+            if (Application.Current != null) _piece = Application.Current.FindResource(piece);
+            PieceType = piece;
         }
         catch
         {

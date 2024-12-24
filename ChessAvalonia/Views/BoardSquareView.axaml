@@ -7,8 +7,8 @@
              xmlns:vm="clr-namespace:ChessAvalonia.ViewModels"
              x:DataType="vm:BoardSquareViewModel">
         <PathIcon Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" 
-                  Foreground="{Binding  PieceColor}"
-                  Data="{Binding Piece }"
+                  Foreground="{Binding  PieceColor , UpdateSourceTrigger=PropertyChanged}"
+                  Data="{Binding Piece , UpdateSourceTrigger=PropertyChanged }"
                   Width="50"
                   Height="50"
                   x:CompileBindings="True">

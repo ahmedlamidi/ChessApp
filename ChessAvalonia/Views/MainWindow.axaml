@@ -16,7 +16,6 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <StackPanel>
     <ListBox ItemsSource="{Binding BoardSquares}"
                 SelectedItem="{Binding SelectedSquare}"
                   
@@ -38,8 +37,5 @@
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
     </ListBox>
-        
-        <Button Command="{Binding ShowNext}"></Button>
-    </StackPanel>
 
 </Window>
