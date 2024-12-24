@@ -24,14 +24,16 @@ public class MainWindowViewModel : ViewModelBase
     
     private BoardSquareViewModel? _selectedBoardSquare;
 
-    private readonly BoardModel _selectedBoard;
+    private BoardModel _selectedBoard;
     
     public BoardSquareViewModel? PreviousBoardSquare { get; set; }
     
     public List<int> ChangedSquares { get; set; } = new();
     
     public bool MoveMade { get; set; } = true;
-
+    
+    public List<int> noCapture = new List<int>();
+    public List<int> capture = new List<int>();
     public BoardSquareViewModel? SelectedSquare
     {
         get => _selectedBoardSquare;
@@ -45,18 +47,37 @@ public class MainWindowViewModel : ViewModelBase
             _selectedBoardSquare.Piece = PreviousBoardSquare.Piece;
             _selectedBoardSquare.PieceColor = PreviousBoardSquare.PieceColor;
             _selectedBoardSquare.Color = (_selectedBoardSquare.Row + _selectedBoardSquare.Col ) % 2 == 0 ? "silver" : "brown";
-            
+            _selectedBoard.BoardRepresentation[(_selectedBoardSquare.Row * 8) + _selectedBoardSquare.Col] =
+                _selectedBoard.BoardRepresentation[(PreviousBoardSquare.Row * 8) + PreviousBoardSquare.Col];
+            _selectedBoard.BoardRepresentation[(PreviousBoardSquare.Row * 8) + PreviousBoardSquare.Col] = "";
             PreviousBoardSquare.Piece = null;
             //     BoardSquares[(_selectedBoardSquare.Row * 8) + _selectedBoardSquare.Col].Piece = previousBoardSquare.Piece;
-            
             }
-            else{
+            else
+            // if we select a non movable square we need to clear the rest of them first
+            {
+                foreach (var move  in capture)
+                {
+                    BoardSquares[move].Color = BoardSquares[move].Col + BoardSquares[move].Row % 2 == 0 ? "silver" : "brown";
+                }
+                capture.Clear();
+                
+                foreach (var move  in noCapture)
+                {
+                    BoardSquares[move].Color = BoardSquares[move].Col + BoardSquares[move].Row % 2 == 0 ? "silver" : "brown";
+                }
+                noCapture.Clear();
+                
+                
+            }
+            // If we do a move we still want to 
+            {
                 var possibleMoves = _selectedBoard.CalcuateBoardRepresentation(value.Row, value.Col);
 
                 if (possibleMoves.Any())
                 {
-                    var noCapture = possibleMoves[0];
-                    var capture = possibleMoves[1];
+                    noCapture = possibleMoves[0];
+                    capture = possibleMoves[1];
 
                     foreach (var move in noCapture)
                     {
