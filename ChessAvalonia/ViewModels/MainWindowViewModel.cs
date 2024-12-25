@@ -43,7 +43,7 @@ public class MainWindowViewModel : ViewModelBase
             // we need to keep the last selected square
             // if the selected sqaure is green then we move to that square from another square
             
-            if (String.Equals(SelectedSquare.Color, "green")){
+            if (String.Equals(SelectedSquare.Color, "green") || String.Equals(SelectedSquare.Color, "red")){
             _selectedBoardSquare.Piece = PreviousBoardSquare.Piece;
             _selectedBoardSquare.PieceColor = PreviousBoardSquare.PieceColor;
             _selectedBoardSquare.Color = (_selectedBoardSquare.Row + _selectedBoardSquare.Col ) % 2 == 0 ? "silver" : "brown";
