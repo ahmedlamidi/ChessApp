@@ -53,18 +53,17 @@ public class MainWindowViewModel : ViewModelBase
             PreviousBoardSquare.Piece = null;
             //     BoardSquares[(_selectedBoardSquare.Row * 8) + _selectedBoardSquare.Col].Piece = previousBoardSquare.Piece;
             }
-            else
-            // if we select a non movable square we need to clear the rest of them first
+            // if we select a square we need to clear the rest of them 
             {
                 foreach (var move  in capture)
                 {
-                    BoardSquares[move].Color = BoardSquares[move].Col + BoardSquares[move].Row % 2 == 0 ? "silver" : "brown";
+                    BoardSquares[move].Color = (BoardSquares[move].Col + BoardSquares[move].Row)% 2 == 0 ? "silver" : "brown";
                 }
                 capture.Clear();
                 
                 foreach (var move  in noCapture)
                 {
-                    BoardSquares[move].Color = BoardSquares[move].Col + BoardSquares[move].Row % 2 == 0 ? "silver" : "brown";
+                    BoardSquares[move].Color = (BoardSquares[move].Col + BoardSquares[move].Row) % 2 == 0 ? "silver" : "brown";
                 }
                 noCapture.Clear();
                 

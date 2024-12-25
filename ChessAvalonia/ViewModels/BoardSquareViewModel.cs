@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using ChessAvalonia.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using ReactiveUI;
 namespace ChessAvalonia.ViewModels;
@@ -32,7 +33,7 @@ public class BoardSquareViewModel:ReactiveObject
             this.RaiseAndSetIfChanged(ref _color, value);
         }
     }
-
+    
     public string PieceColor { 
         get => _pieceColor;
         set
@@ -69,6 +70,7 @@ public class BoardSquareViewModel:ReactiveObject
             Debug.Print($"Could not find resource {_piece}");
             PieceType = null;
         }
+        
         
     }
     

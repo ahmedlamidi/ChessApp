@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessAvalonia.Models;
 
@@ -44,7 +45,7 @@ public class BoardModel
                             Moves.Add(((row+ direction) * 8) + column);
                         }
 
-                        else if (!String.Equals(BoardRepresentation[((row + direction) * 8) + column], square[0],
+                        else if (!String.Equals(BoardRepresentation[((row + direction) * 8) + column].Split("-")[0], square[0],
                                 StringComparison.InvariantCultureIgnoreCase))
                             // check if the piece is not the same color as us
                             // if it is not then we can capture it
@@ -56,13 +57,445 @@ public class BoardModel
                     }
                 }
                     break;
+                case "Bishop":
+                {
+                    var Bishop_Possible_move = Diagonal(row, column, square[0]);
+                    Moves = Bishop_Possible_move[0];
+                    Captures = Bishop_Possible_move[1];
+                    break;
+                }
+                case "Rook":
+                    var Rook_Possible_move = Straight(row, column, square[0]);
+                    Moves = Rook_Possible_move[0];
+                    Captures = Rook_Possible_move[1];
+                    break;
+                case "Queen":
+                    var Queen_Possible_move = Diagonal(row, column, square[0]);
+                    Moves = Queen_Possible_move[0];
+                    Captures = Queen_Possible_move[1];
+                    Queen_Possible_move = Straight(row, column, square[0]);
+                    Moves.AddRange(Queen_Possible_move[0]);
+                    Captures.AddRange(Queen_Possible_move[1]);
+                    // add the Diagonal Moves and the Straight Moves for the queen
+                    break;
+                case "Knight":
+                    var Knight_Possible_move = Lshape(row, column, square[0]);
+                    Moves = Knight_Possible_move[0];
+                    Captures = Knight_Possible_move[1];
+                    break;
             }
             return [Moves, Captures];
         }
     }
+
+
+    public List<List<int>> Diagonal(int row, int column, string pieceColor)
+    {
+        var Captures = new List<int>();
+        var noCapture = new List<int>();
+        // I would first go downward and right
+        // add one to column and one to row
+        
+        var current_row = row;
+        var current_column = column;
+
+        while (true)
+        {
+            current_row += 1;
+            current_column += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                             StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        current_row = row;
+        current_column = column;
+
+        // then I would go up and left
+        while (true)
+        {
+            current_row -= 1;
+            current_column -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        current_row = row;
+        current_column = column;
+        // then I would go left and down
+        while (true)
+        {
+            current_row += 1;
+            current_column -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        current_row = row;
+        current_column = column;
+        // then I would go up and right
+        while (true)
+        {
+            current_row -= 1;
+            current_column += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        return [noCapture, Captures];
+    }
+
+     public List<List<int>> Straight(int row, int column, string pieceColor)
+    {
+        var Captures = new List<int>();
+        var noCapture = new List<int>();
+        // I would first go downward and right
+        // add one to column and one to row
+        
+        var current_row = row;
+        var current_column = column;
+
+        while (true)
+        {
+            current_row += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                             StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        current_row = row;
+        current_column = column;
+
+        // then I would go up and left
+        while (true)
+        {
+            current_row -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        current_row = row;
+        current_column = column;
+        // then I would go left and down
+        while (true)
+        {
+            current_column -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        current_row = row;
+        current_column = column;
+        // then I would go up and right
+        while (true)
+        {
+            current_column += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                    continue;
+                }
+                if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+            break;
+        }
+        
+        return [noCapture, Captures];
+    }
+
+
+    public List<List<int>> Lshape(int row, int column, string pieceColor)
+    {
+        var Captures = new List<int>();
+        var noCapture = new List<int>();
+        // I would first go downward and right
+        // add one to column and one to row
+        
+        var current_row = row;
+        var current_column = column;
+        {
+            current_row += 1;
+            current_column += 2;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        current_row = row;
+        current_column = column;
+        {
+            current_row -= 1;
+            current_column += 2;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        } 
+        current_row = row;
+        current_column = column;
+        {
+            current_row -= 1;
+            current_column -= 2;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        current_row = row;
+        current_column = column;
+        {
+            current_row += 1;
+            current_column -= 2;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        
+        current_row = row;
+        current_column = column;
+        {
+            current_row += 2;
+            current_column += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        
+        current_row = row;
+        current_column = column;
+        {
+            current_row += 2;
+            current_column -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        
+        current_row = row;
+        current_column = column;
+        {
+            current_row -= 2;
+            current_column += 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        
+        current_row = row;
+        current_column = column;
+        {
+            current_row -= 2;
+            current_column -= 1;
+            if (CheckIfValid(current_row, current_column))
+            {
+                if (string.IsNullOrEmpty(BoardRepresentation[((current_row) * 8) + current_column]))
+                {
+                    noCapture.Add(((current_row) * 8) + current_column);
+                }
+                else if (!String.Equals(BoardRepresentation[((current_row) * 8) + current_column].Split("-")[0], pieceColor,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    // check if the piece is not the same color as us
+                    // if it is not then we can capture it
+                {
+                    Captures.Add(((current_row) * 8) + current_column);
+                }
+            }
+        
+        }
+        
+        return [noCapture, Captures];
+    }
     
     
-    
+    public bool CheckIfValid(int row, int column)
+    {
+        return row >= 0 && row < 8 && column >= 0 && column < 8;
+        // check that I remain in the board
+        // handles all overflows here
+    }
     
     
     
