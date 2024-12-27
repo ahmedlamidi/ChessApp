@@ -231,14 +231,6 @@ public class BoardModel
     }
     
     
-    public bool CheckIfValid(int row, int column)
-    {
-        return row >= 0 && row < 8 && column >= 0 && column < 8;
-        // check that I remain in the board
-        // handles all overflows here
-    }
-
-   
     /*
      * Return 0 if not in valid range
      * Return 1 if added to noCapture
@@ -271,6 +263,8 @@ public class BoardModel
     
     public BoardModel(List<String>? boardRepresentation)
     {
+        BasicChessEngine engine = new BasicChessEngine();
+        engine.NextMoves(1);
         if (BoardRepresentation is null)
         {
             BoardRepresentation = boardRepresentation = new List<string>
