@@ -12,7 +12,7 @@ public class BoardModel
 
     public Tuple<int, int> findNextMove()
     {
-        BasicChessEngine engine = new BasicChessEngine(null);
+        BasicChessEngine engine = new BasicChessEngine(RepresenttoEngine());
         // starting it from nothing anc creating a new 
         engine.DepthSearch(-1, -1, 1);
         // this means I should start a move with black and try to maximize for black
@@ -23,9 +23,26 @@ public class BoardModel
     public List<int> RepresenttoEngine()
     {
         var represent = new List<int>();
+        
+        var pieceValues = new Dictionary<string, int>
+        {
+            { "black-Rook", -12 },
+            { "black-Knight", -7 },
+            { "black-Bishop", -5 },
+            { "black-Queen", -25 },
+            { "black-Kings", -100 },
+            { "black-Pawn", -1 },
+            { "white-Rook", 12 },
+            { "white-Knight", 7 },
+            { "white-Bishop", 5 },
+            { "white-Queen", 25 },
+            { "white-Kings", 100 },
+            { "white-Pawn", 1 },
+            { "", 0 } 
+        };
         foreach (var move in BoardRepresentation)
         {
-            
+            represent.Add(pieceValues[move]);
         }
         return represent;
     }
