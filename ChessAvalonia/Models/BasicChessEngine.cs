@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Transactions;
 
 namespace ChessAvalonia.Models;
 
@@ -263,12 +264,12 @@ public class BasicChessEngine
 
         // if we have someone on the front right or front left, we can check that too
 
-        if (BoardRepresentation[((row - player) * 8) + column + 1] != 0)
+        if (column < 7 && BoardRepresentation[((row - player) * 8) + column + 1] != 0)
         {
             CheckIfValidAndUpdate(row - player, column + 1, ref moves, player, position);
         }
 
-        if (BoardRepresentation[((row - player) * 8) + column - 1] != 0)
+        if (column > 0 && BoardRepresentation[((row - player) * 8) + column - 1] != 0)
         {
             CheckIfValidAndUpdate(row - player, column + 1, ref moves, player, position);
         }
@@ -292,6 +293,8 @@ public class BasicChessEngine
     {
         // remember that white is 1
         // black is -1
+        Random rnd = new Random();
+        // return BoardRepresentation.Sum() > 0 ? (1 * rnd.Next(300)) : (-1 * rnd.Next(300));
         return BoardRepresentation.Sum();
         // this is the simplest evaluation function
     }
@@ -315,14 +318,14 @@ public class BasicChessEngine
                 BoardRepresentation[move.Item2] = 0;
                 var next_level = new BasicChessEngine(BoardRepresentation);
                 var eval = next_level.DepthSearch(player * -1, original_player, depth - 1);
-                if (player == original_player && (eval >= max_eval))
+                if (player != original_player && (eval >= max_eval))
                 {
 
                     max_eval = eval;
                     move_to_play = move;
                 }
 
-                else if(player != original_player && (eval <= min_eval))
+                else if(player == original_player && (eval <= min_eval))
                 {
                     min_eval = eval;
                     move_to_play = move;
@@ -334,7 +337,7 @@ public class BasicChessEngine
                 // do the move and then undo the move
             }
             
-            if (player != original_player)
+            if (player == original_player)
             {
                 
                 return min_eval;

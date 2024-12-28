@@ -14,7 +14,7 @@ public class BoardModel
     {
         BasicChessEngine engine = new BasicChessEngine(RepresenttoEngine());
         // starting it from nothing anc creating a new 
-        engine.DepthSearch(-1, -1, 1);
+        engine.DepthSearch(-1, -1, 3);
         // this means I should start a move with black and try to maximize for black
         // with a depth of one
         return engine.move_to_play;
