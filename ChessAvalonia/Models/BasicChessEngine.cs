@@ -19,7 +19,78 @@ namespace ChessAvalonia.Models;
 // at the end I would take the best move which is a variable of the board
 public class BasicChessEngine
 {
+    
+      public static readonly List<int> PawnTable = new List<int>
+    {
+        0,  0,  0,  0,  0,  0,  0,  0,
+        5, 10, 10,-20,-20, 10, 10,  5,
+        5, -5,-10,  0,  0,-10, -5,  5,
+        0,  0,  0, 20, 20,  0,  0,  0,
+        5,  5, 10, 25, 25, 10,  5,  5,
+       10, 10, 20, 30, 30, 20, 10, 10,
+       50, 50, 50, 50, 50, 50, 50, 50,
+        0,  0,  0,  0,  0,  0,  0,  0
+    };
 
+    public static readonly List<int> KnightTable = new List<int>
+    {
+       -50,-40,-30,-30,-30,-30,-40,-50,
+       -40,-20,  0,  0,  0,  0,-20,-40,
+       -30,  0, 10, 15, 15, 10,  0,-30,
+       -30,  5, 15, 20, 20, 15,  5,-30,
+       -30,  0, 15, 20, 20, 15,  0,-30,
+       -30,  5, 10, 15, 15, 10,  5,-30,
+       -40,-20,  0,  5,  5,  0,-20,-40,
+       -50,-40,-30,-30,-30,-30,-40,-50
+    };
+
+    public static readonly List<int> BishopTable = new List<int>
+    {
+       -20,-10,-10,-10,-10,-10,-10,-20,
+       -10,  0,  0,  0,  0,  0,  0,-10,
+       -10,  0,  5, 10, 10,  5,  0,-10,
+       -10,  5,  5, 10, 10,  5,  5,-10,
+       -10,  0, 10, 10, 10, 10,  0,-10,
+       -10, 10, 10, 10, 10, 10, 10,-10,
+       -10,  5,  0,  0,  0,  0,  5,-10,
+       -20,-10,-10,-10,-10,-10,-10,-20
+    };
+
+    public static readonly List<int> RookTable = new List<int>
+    {
+         0,  0,  0,  5,  5,  0,  0,  0,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+       -5,  0,  0,  0,  0,  0,  0, -5,
+        5, 10, 10, 10, 10, 10, 10,  5,
+         0,  0,  0,  0,  0,  0,  0,  0
+    };
+
+    public static readonly List<int> QueenTable = new List<int>
+    {
+       -20,-10,-10, -5, -5,-10,-10,-20,
+       -10,  0,  0,  0,  0,  0,  0,-10,
+       -10,  0,  5,  5,  5,  5,  0,-10,
+        -5,  0,  5,  5,  5,  5,  0, -5,
+         0,  0,  5,  5,  5,  5,  0, -5,
+       -10,  5,  5,  5,  5,  5,  0,-10,
+       -10,  0,  5,  0,  0,  0,  0,-10,
+       -20,-10,-10, -5, -5,-10,-10,-20
+    };
+
+    public static readonly List<int> KingTable = new List<int>
+    {
+       -30,-40,-40,-50,-50,-40,-40,-30,
+       -30,-40,-40,-50,-50,-40,-40,-30,
+       -30,-40,-40,-50,-50,-40,-40,-30,
+       -30,-40,-40,-50,-50,-40,-40,-30,
+       -20,-30,-30,-40,-40,-30,-30,-20,
+       -10,-20,-20,-20,-20,-20,-20,-10,
+        20, 20,  0,  0,  0,  0, 20, 20,
+        20, 30, 10,  0,  0, 10, 30, 20
+    };
     public List<Tuple<int, int>> NextMoves(int player)
     {
         // make white equal to 1 and black equal to -1
@@ -59,7 +130,7 @@ public class BasicChessEngine
                         Diagonal(position / 8, position % 8, ref Moves, player, position);
                         Straight(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 100:
+                    case 27:
                         // all the moves for the king
                         BoxAround(position / 8, position % 8, ref Moves, player, position);
                         break;
@@ -251,12 +322,15 @@ public class BasicChessEngine
     public void PawnMove(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
     {
         // we can always check if the + 1 is a valid move
-        CheckIfValidAndUpdate(row - player, column, ref moves, player, position);
+        if (BoardRepresentation[((row - player)) * 8 + column] == 0)
+        {
+            CheckIfValidAndUpdate(row - player, column, ref moves, player, position);
+        }
         // remember that white is 1 and black is -1 
         // white is going up
 
         // we can then check if we are at the starting row
-        if ((player == 1 && row == 6) || (player == -1 && row == 1))
+        if ((player == 1 && row == 6 && BoardRepresentation[((4) * 8) + column ] == 0) || (player == -1 && row == 1 && BoardRepresentation[((3) * 8) + column ] == 0))
         {
             CheckIfValidAndUpdate(row - (2 * player), column, ref moves, player, position);
         }
@@ -279,14 +353,14 @@ public class BasicChessEngine
     public Tuple<int, int> move_to_play {get; set; }
 
     public List<int> BoardRepresentation { get; set; } = new List<int>([
-        -12, -7, -5, -25, -100, -5, -7, -12,
+        -12, -7, -5, -25, -27, -5, -7, -12,
         -1, -1, -1, -1, -1, -1, -1, -1,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1,
-        12, 7, 5, 25, 100, 5, 7, 12
+        12, 7, 5, 25, 27, 5, 7, 12
     ]);
 
     public int EvaluatePosition(int player)
@@ -295,7 +369,41 @@ public class BasicChessEngine
         // black is -1
         Random rnd = new Random();
         // return BoardRepresentation.Sum() > 0 ? (1 * rnd.Next(300)) : (-1 * rnd.Next(300));
-        return BoardRepresentation.Sum();
+
+        var total = 0;
+        int position = -1;
+        foreach (var value in BoardRepresentation)
+        {
+            position += 1;
+            switch (Math.Abs(value))
+            {
+                case 1:
+                    if (value >= 0) total += (PawnTable[position] * value) ;
+                    else total += (PawnTable[63 -position] * value);
+                    break;
+                case 5:
+                    if (value >= 0) total += (BishopTable[position] * value) ;
+                    else total += (BishopTable[63 -position] * value);
+                    break;
+                case 7:
+                    if (value >= 0) total += (KnightTable[position] * value) ;
+                    else total += (KnightTable[63 -position] * value);
+                    break;
+                case 12:
+                    if (value >= 0) total += (RookTable[position] * value) ;
+                    else total += (RookTable[63 - position] * value);
+                    break; 
+                case 25:
+                    if (value >= 0) total += (QueenTable[position] * value) ;
+                    else total += (QueenTable[ 63 -position] * value);
+                    break;
+                case 27:
+                    if (value >= 0) total += (KingTable[position] * value) ;
+                    else total += (KingTable[63 -position] * value);
+                    break;
+            }
+        }
+        return total;
         // this is the simplest evaluation function
     }
 
