@@ -51,6 +51,21 @@ public class MainWindowViewModel : ViewModelBase
                 _selectedBoard.BoardRepresentation[(PreviousBoardSquare.Row * 8) + PreviousBoardSquare.Col];
             _selectedBoard.BoardRepresentation[(PreviousBoardSquare.Row * 8) + PreviousBoardSquare.Col] = "";
             PreviousBoardSquare.Piece = null;
+            var save = _selectedBoard.findNextMove();
+            // called properly
+            if (save != null)
+            {
+                var startingpiece = BoardSquares[save.Item2];
+                var end_place = BoardSquares[save.Item1];
+                end_place.Piece = startingpiece.Piece;
+                end_place.PieceColor = startingpiece.PieceColor;
+                startingpiece.Color = (startingpiece.Row + startingpiece.Col ) % 2 == 0 ? "silver" : "brown";
+                _selectedBoard.BoardRepresentation[(end_place.Row * 8) + end_place.Col] =
+                    _selectedBoard.BoardRepresentation[(startingpiece.Row * 8) + startingpiece.Col];
+                _selectedBoard.BoardRepresentation[(startingpiece.Row * 8) + startingpiece.Col] = "";
+                startingpiece.Piece = null;
+            }
+            else Debug.Print("No move seen");
             //     BoardSquares[(_selectedBoardSquare.Row * 8) + _selectedBoardSquare.Col].Piece = previousBoardSquare.Piece;
             }
             // if we select a square we need to clear the rest of them 
@@ -66,8 +81,6 @@ public class MainWindowViewModel : ViewModelBase
                     BoardSquares[move].Color = (BoardSquares[move].Col + BoardSquares[move].Row) % 2 == 0 ? "silver" : "brown";
                 }
                 noCapture.Clear();
-                
-                
             }
             // If we do a move we still want to 
             {
@@ -80,7 +93,6 @@ public class MainWindowViewModel : ViewModelBase
 
                     foreach (var move in noCapture)
                     {
-                        Debug.WriteLine($"{move}");
                         BoardSquares[move].Color = "green";
                     }
 

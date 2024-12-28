@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ChessAvalonia.Models;
@@ -9,7 +10,25 @@ public class BoardModel
     
     public List<String> BoardRepresentation { get; set; }
 
+    public Tuple<int, int> findNextMove()
+    {
+        BasicChessEngine engine = new BasicChessEngine(null);
+        // starting it from nothing anc creating a new 
+        engine.DepthSearch(-1, -1, 1);
+        // this means I should start a move with black and try to maximize for black
+        // with a depth of one
+        return engine.move_to_play;
+    }
 
+    public List<int> RepresenttoEngine()
+    {
+        var represent = new List<int>();
+        foreach (var move in BoardRepresentation)
+        {
+            
+        }
+        return represent;
+    }
     public List<List<int>> CalcuateBoardRepresentation(int row, int column)
     {
         // I want to calculate all the moves to go to given a position and 
@@ -263,8 +282,6 @@ public class BoardModel
     
     public BoardModel(List<String>? boardRepresentation)
     {
-        BasicChessEngine engine = new BasicChessEngine();
-        engine.NextMoves(1);
         if (BoardRepresentation is null)
         {
             BoardRepresentation = boardRepresentation = new List<string>
