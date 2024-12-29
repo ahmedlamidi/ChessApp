@@ -14,29 +14,29 @@ public class BoardModel
     {
         BasicChessEngine engine = new BasicChessEngine(RepresenttoEngine());
         // starting it from nothing anc creating a new 
-        engine.DepthSearch(-1, -1, 4);
+        engine.DepthSearch(-1, -1, 4, int.MinValue, int.MaxValue);
         // this means I should start a move with black and try to maximize for black
         // with a depth of one
         return engine.move_to_play;
     }
 
-    public List<int> RepresenttoEngine()
+    public List<double> RepresenttoEngine()
     {
-        var represent = new List<int>();
+        var represent = new List<double>();
         
-        var pieceValues = new Dictionary<string, int>
+        var pieceValues = new Dictionary<string, double>
         {
-            { "black-Rook", -12 },
-            { "black-Knight", -7 },
-            { "black-Bishop", -5 },
-            { "black-Queen", -25 },
-            { "black-Kings", -27 },
+            { "black-Rook", -5},
+            { "black-Knight", -3 },
+            { "black-Bishop", -3.25 },
+            { "black-Queen", -9 },
+            { "black-Kings", -15 },
             { "black-Pawn", -1 },
-            { "white-Rook", 12 },
-            { "white-Knight", 7 },
-            { "white-Bishop", 5 },
-            { "white-Queen", 25 },
-            { "white-Kings", 27 },
+            { "white-Rook", 5 },
+            { "white-Knight", 3 },
+            { "white-Bishop", 3.25 },
+            { "white-Queen", 9 },
+            { "white-Kings", 15 },
             { "white-Pawn", 1 },
             { "", 0 } 
         };

@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,78 +20,91 @@ namespace ChessAvalonia.Models;
 // at the end I would take the best move which is a variable of the board
 public class BasicChessEngine
 {
-    
-      public static readonly List<int> PawnTable = new List<int>
+    public enum PieceValues : int
     {
-        0,  0,  0,  0,  0,  0,  0,  0,
-        5, 10, 10,-20,-20, 10, 10,  5,
-        5, -5,-10,  0,  0,-10, -5,  5,
-        0,  0,  0, 20, 20,  0,  0,  0,
-        5,  5, 10, 25, 25, 10,  5,  5,
-       10, 10, 20, 30, 30, 20, 10, 10,
-       50, 50, 50, 50, 50, 50, 50, 50,
-        0,  0,  0,  0,  0,  0,  0,  0
-    };
+        Pawn = 1,
+        Bishop = 4,
+        Knight = 3,
+        Rook = 5,
+        Queen = 9, 
+        King = 15
+    }
+      public static readonly List<int> PawnTable = new List<int>
+      {
+          1,  1,  1,  1,  1,  1,  1,  1,
+          6, 11, 11,  1,  1, 11, 11,  6,
+          6,  1,  1,  5,  5,  1,  1,  6,
+          1,  1,  1, 21, 21,  1,  1,  1,
+          6,  6, 11, 26, 26, 11,  6,  6,
+          11, 11, 21, 31, 31, 21, 11, 11,
+          51, 51, 51, 51, 51, 51, 51, 51,
+          1,  1,  1,  1,  1,  1,  1,  1
+      };
+
 
     public static readonly List<int> KnightTable = new List<int>
     {
-       -50,-40,-30,-30,-30,-30,-40,-50,
-       -40,-20,  0,  0,  0,  0,-20,-40,
-       -30,  0, 10, 15, 15, 10,  0,-30,
-       -30,  5, 15, 20, 20, 15,  5,-30,
-       -30,  0, 15, 20, 20, 15,  0,-30,
-       -30,  5, 10, 15, 15, 10,  5,-30,
-       -40,-20,  0,  5,  5,  0,-20,-40,
-       -50,-40,-30,-30,-30,-30,-40,-50
+        1,  1,  1,  1,  1,  1,  1,  1,
+        1, 21, 31, 31, 31, 31, 21,  1,
+        1, 31, 41, 46, 46, 41, 31,  1,
+        1, 26, 46, 51, 51, 46, 26,  1,
+        1, 31, 46, 51, 51, 46, 31,  1,
+        1, 26, 41, 46, 46, 41, 26,  1,
+        1, 21, 31, 36, 36, 31, 21,  1,
+        1,  1,  1,  1,  1,  1,  1,  1
     };
+
 
     public static readonly List<int> BishopTable = new List<int>
     {
-       -20,-10,-10,-10,-10,-10,-10,-20,
-       -10,  0,  0,  0,  0,  0,  0,-10,
-       -10,  0,  5, 10, 10,  5,  0,-10,
-       -10,  5,  5, 10, 10,  5,  5,-10,
-       -10,  0, 10, 10, 10, 10,  0,-10,
-       -10, 10, 10, 10, 10, 10, 10,-10,
-       -10,  5,  0,  0,  0,  0,  5,-10,
-       -20,-10,-10,-10,-10,-10,-10,-20
+        1,  1,  1,  1,  1,  1,  1,  1,
+        1, 21, 21, 21, 21, 21, 21,  1,
+        1, 21, 26, 31, 31, 26, 21,  1,
+        1, 26, 26, 31, 31, 26, 26,  1,
+        1, 21, 31, 31, 31, 31, 21,  1,
+        1, 31, 31, 31, 31, 31, 31,  1,
+        1, 26, 21, 21, 21, 21, 26,  1,
+        1,  1,  1,  1,  1,  1,  1,  1
     };
 
     public static readonly List<int> RookTable = new List<int>
     {
-         0,  0,  0,  5,  5,  0,  0,  0,
-       -5,  0,  0,  0,  0,  0,  0, -5,
-       -5,  0,  0,  0,  0,  0,  0, -5,
-       -5,  0,  0,  0,  0,  0,  0, -5,
-       -5,  0,  0,  0,  0,  0,  0, -5,
-       -5,  0,  0,  0,  0,  0,  0, -5,
-        5, 10, 10, 10, 10, 10, 10,  5,
-         0,  0,  0,  0,  0,  0,  0,  0
+        1,  1,  1,  6,  6,  1,  1,  1,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        11, 21, 21, 21, 21, 21, 21, 11,
+        1,  1,  1,  1,  1,  1,  1,  1
     };
+
 
     public static readonly List<int> QueenTable = new List<int>
     {
-       -20,-10,-10, -5, -5,-10,-10,-20,
-       -10,  0,  0,  0,  0,  0,  0,-10,
-       -10,  0,  5,  5,  5,  5,  0,-10,
-        -5,  0,  5,  5,  5,  5,  0, -5,
-         0,  0,  5,  5,  5,  5,  0, -5,
-       -10,  5,  5,  5,  5,  5,  0,-10,
-       -10,  0,  5,  0,  0,  0,  0,-10,
-       -20,-10,-10, -5, -5,-10,-10,-20
+        1,  1,  1,  6,  6,  1,  1,  1,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        6, 11, 16, 16, 16, 16, 11,  6,
+        11, 11, 16, 16, 16, 16, 11,  6,
+        11, 11, 16, 16, 16, 16, 11,  6,
+        6, 11, 16, 16, 16, 16, 11,  6,
+        6, 11, 11, 11, 11, 11, 11,  6,
+        1,  1,  1,  6,  6,  1,  1,  1
     };
+
 
     public static readonly List<int> KingTable = new List<int>
     {
-       -30,-40,-40,-50,-50,-40,-40,-30,
-       -30,-40,-40,-50,-50,-40,-40,-30,
-       -30,-40,-40,-50,-50,-40,-40,-30,
-       -30,-40,-40,-50,-50,-40,-40,-30,
-       -20,-30,-30,-40,-40,-30,-30,-20,
-       -10,-20,-20,-20,-20,-20,-20,-10,
-        20, 20,  0,  0,  0,  0, 20, 20,
-        20, 30, 10,  0,  0, 10, 30, 20
+        11,  1,  1,  1,  1,  1,  1, 11,
+        11, 21, 21,  1,  1, 21, 21, 11,
+        11, 21, 21,  1,  1, 21, 21, 11,
+        11, 21, 21,  1,  1, 21, 21, 11,
+        11, 21, 21,  1,  1, 21, 21, 11,
+        11, 21, 21, 21, 21, 21, 21, 11,
+        11, 31, 31, 31, 31, 31, 31, 11,
+        21, 31, 21, 11, 11, 21, 31, 21
     };
+
     public List<Tuple<int, int>> NextMoves(int player)
     {
         // make white equal to 1 and black equal to -1
@@ -105,7 +119,7 @@ public class BasicChessEngine
         {
             position++;
             if (piece == 0) continue;
-            int peice_type = Math.Abs(piece);
+            double peice_type = Math.Abs(piece);
             int piece_color = piece > 0 ? 1 : -1;
             // we basically just make the piece type the  actual value
             // then we make the piece color into 
@@ -116,21 +130,21 @@ public class BasicChessEngine
                     case 1: // case of pawn
                         PawnMove(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 5: // case of bishop 
+                    case 3.25: // case of bishop 
                         // I want to make moves a list of the start to end positions I can do for the bishop
                         Diagonal(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 7: // case of the knight
+                    case 3: // case of the knight
                         Lshape(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 12: // case of rook
+                    case 5: // case of rook
                         Straight(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 25: // case of queen
+                    case 9: // case of queen
                         Diagonal(position / 8, position % 8, ref Moves, player, position);
                         Straight(position / 8, position % 8, ref Moves, player, position);
                         break;
-                    case 27:
+                    case 15:
                         // all the moves for the king
                         BoxAround(position / 8, position % 8, ref Moves, player, position);
                         break;
@@ -352,25 +366,25 @@ public class BasicChessEngine
     
     public Tuple<int, int> move_to_play {get; set; }
 
-    public List<int> BoardRepresentation { get; set; } = new List<int>([
-        -12, -7, -5, -25, -27, -5, -7, -12,
+    public List<double> BoardRepresentation { get; set; } = new List<double>([
+        -5, -3, -3.25, -9, -15, -3.25, -3, -5,
         -1, -1, -1, -1, -1, -1, -1, -1,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1,
-        12, 7, 5, 25, 27, 5, 7, 12
+        5, 3, 3.25, 9, 15, 3.25, 3, 5
     ]);
 
-    public int EvaluatePosition(int player)
+    public double EvaluatePosition(int player)
     {
         // remember that white is 1
         // black is -1
         Random rnd = new Random();
         // return BoardRepresentation.Sum() > 0 ? (1 * rnd.Next(300)) : (-1 * rnd.Next(300));
 
-        var total = 0;
+        double total = 0;
         int position = -1;
         foreach (var value in BoardRepresentation)
         {
@@ -381,25 +395,25 @@ public class BasicChessEngine
                     if (value >= 0) total += (PawnTable[position] * value) ;
                     else total += (PawnTable[63 -position] * value);
                     break;
-                case 5:
+                case 3:
                     if (value >= 0) total += (BishopTable[position] * value) ;
-                    else total += (BishopTable[63 -position] * value);
+                    else total += (BishopTable[63 -position] * (value / 1.5));
                     break;
-                case 7:
+                case 3.25:
                     if (value >= 0) total += (KnightTable[position] * value) ;
-                    else total += (KnightTable[63 -position] * value);
+                    else total += (KnightTable[63 -position] * (value / 1.5));
                     break;
-                case 12:
+                case 5:
                     if (value >= 0) total += (RookTable[position] * value) ;
-                    else total += (RookTable[63 - position] * value);
+                    else total += (RookTable[63 - position] * (value / 3.5));
                     break; 
-                case 25:
+                case 9:
                     if (value >= 0) total += (QueenTable[position] * value) ;
-                    else total += (QueenTable[ 63 -position] * value);
+                    else total += (QueenTable[ 63 -position] *( value / 5));
                     break;
-                case 27:
+                case 15:
                     if (value >= 0) total += (KingTable[position] * value) ;
-                    else total += (KingTable[63 -position] * value);
+                    else total += (KingTable[63 -position] * (value / 8));
                     break;
             }
         }
@@ -407,55 +421,71 @@ public class BasicChessEngine
         // this is the simplest evaluation function
     }
 
-    public int DepthSearch(int player, int original_player, int depth)
+    public double DepthSearch(int player, int original_player, int depth, double alpha, double beta)
     {
         if (depth == 0)
         {
             return EvaluatePosition(player);
         }
         {
-
-            int max_eval = int.MinValue;
-            int min_eval = int.MaxValue;
-            var possible_best_move = Tuple.Create(0, 0);
+            
+            // for alpha beta pruning I want to see
+            // I want Alpha to be the max value - - inf
+            // Beta should be the min + inf 
+            //  in the min part - change Beta Value 
+            // we are basically just seeing at a higher step that we do not need to check
+            // since all other options would be worse in that branch
+            
             // set tbe best move to nothing at the start
+            double maxmimizing_score = int.MinValue;
+            double minimizing_score = int.MinValue;
             foreach (var move in NextMoves(player))
             {
                 var save_space = BoardRepresentation[move.Item1];
+                // we save the peice in the starting board
+                // then we move the board piece from 2 to 1
+                // then we set the second one to empty
                 BoardRepresentation[move.Item1] = BoardRepresentation[move.Item2];
                 BoardRepresentation[move.Item2] = 0;
                 var next_level = new BasicChessEngine(BoardRepresentation);
-                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1);
-                if (player != original_player && (eval >= max_eval))
-                {
-
-                    max_eval = eval;
-                    move_to_play = move;
-                }
-
-                else if(player == original_player && (eval <= min_eval))
-                {
-                    min_eval = eval;
-                    move_to_play = move;
-                }
-
-                // do the min max part here 
+                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta);
                 BoardRepresentation[move.Item2] = BoardRepresentation[move.Item1];
                 BoardRepresentation[move.Item1] = save_space;
-                // do the move and then undo the move
+                if (player != original_player) // maximizing
+                {
+                    if (eval >= maxmimizing_score)
+                    {
+                        move_to_play = move;
+                        maxmimizing_score = eval;
+                    }
+                    if (eval > beta) break;
+                    alpha = Math.Max(alpha, eval);
+
+                }
+
+                else if(player == original_player) // minimizing 
+                {
+                    if (eval <= minimizing_score)
+                    {
+                        minimizing_score = eval;
+                        move_to_play = move;
+                    }
+                    if (eval <= alpha) break;
+                    beta = Math.Min(beta, eval);
+                }
             }
             
-            if (player == original_player)
+            if (player == original_player) // minimizing
             {
                 
-                return min_eval;
+                return minimizing_score;
             }
-            return max_eval;
+            return maxmimizing_score;
         }
     }
 
 
-    public BasicChessEngine(List<int> startingposition)
+    public BasicChessEngine(List<double> startingposition)
     {
         if ( startingposition is not null && startingposition.Count != 0)
         {

@@ -83,6 +83,7 @@ public class MainWindowViewModel : ViewModelBase
                 noCapture.Clear();
             }
             // If we do a move we still want to 
+            if (SelectedSquare.PieceColor == "white")
             {
                 var possibleMoves = _selectedBoard.CalcuateBoardRepresentation(value.Row, value.Col);
 
