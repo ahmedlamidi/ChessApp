@@ -105,7 +105,7 @@ public class BasicChessEngine
         21, 31, 21, 11, 11, 21, 31, 21
     };
 
-    public List<Tuple<int, int>> NextMoves(int player)
+    public List<List<Tuple<int, int>>> NextMoves(int player)
     {
         // make white equal to 1 and black equal to -1
         // based on the board and the player we want to get all possible moves
@@ -114,6 +114,7 @@ public class BasicChessEngine
         // then pawn - 1, bishop - 5 , knight - 7, rook - 12, queen - 25, king - 100
         // we need 64 * 2 to represent the whole board
         var Moves = new List<Tuple<int, int>>();
+        var CapturedMoves = new List<Tuple<int, int>>();
         int position = -1;
         foreach (var piece in BoardRepresentation)
         {
@@ -128,44 +129,43 @@ public class BasicChessEngine
                 switch (peice_type)
                 {
                     case 1: // case of pawn
-                        PawnMove(position / 8, position % 8, ref Moves, player, position);
+                        PawnMove(position / 8, position % 8, ref Moves, ref CapturedMoves, player, position);
                         break;
                     case 3.25: // case of bishop 
                         // I want to make moves a list of the start to end positions I can do for the bishop
-                        Diagonal(position / 8, position % 8, ref Moves, player, position);
+                        Diagonal(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         break;
                     case 3: // case of the knight
-                        Lshape(position / 8, position % 8, ref Moves, player, position);
+                        Lshape(position / 8, position % 8, ref Moves, ref CapturedMoves, player, position);
                         break;
                     case 5: // case of rook
-                        Straight(position / 8, position % 8, ref Moves, player, position);
+                        Straight(position / 8, position % 8, ref Moves,ref CapturedMoves,  player, position);
                         break;
                     case 9: // case of queen
-                        Diagonal(position / 8, position % 8, ref Moves, player, position);
-                        Straight(position / 8, position % 8, ref Moves, player, position);
+                        Diagonal(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
+                        Straight(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         break;
                     case 15:
                         // all the moves for the king
-                        BoxAround(position / 8, position % 8, ref Moves, player, position);
+                        BoxAround(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         break;
                 }
             }
         }
 
-        return Moves;
+        return [CapturedMoves, Moves];
         // returning the next moves works correctly
     }
 
 
-    public int CheckIfValidAndUpdate(int current_row, int current_column, ref List<Tuple<int, int>> moves, int player,
+    public int CheckIfValidAndUpdate(int current_row, int current_column, ref List<Tuple<int, int>> moves, 
+        ref List<Tuple<int, int>> CapturedMoves, int player,
         int position)
     {
         if (current_row >= 0 && current_row < 8 && current_column >= 0 && current_column < 8)
         {
             if (BoardRepresentation[((current_row) * 8) + current_column] == 0)
             {
-                var newMove = new Tuple<int, int>((current_row * 8) + current_column, position);
-                if (!moves.Contains(newMove))
                     moves.Add((new Tuple<int, int>((current_row * 8) + current_column, position)));
                 return 1;
             }
@@ -174,9 +174,7 @@ public class BasicChessEngine
                 // check if the piece is not the same color as us
                 // if it is not then we can capture it
             {
-                var newMove = new Tuple<int, int>((current_row * 8) + current_column, position);
-                if (!moves.Contains(newMove))
-                    moves.Add((new Tuple<int, int>((current_row * 8) + current_column, position)));
+                    CapturedMoves.Add((new Tuple<int, int>((current_row * 8) + current_column, position)));
                 return -1;
             }
         }
@@ -184,7 +182,7 @@ public class BasicChessEngine
         return -1;
     }
 
-    public void Diagonal(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
+    public void Diagonal(int row, int column, ref List<Tuple<int, int>> moves, ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
         // I would first go downward and right
         // add one to column and one to row
@@ -196,7 +194,7 @@ public class BasicChessEngine
         {
             current_row += 1;
             current_column += 1;
-            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, ref CapturedMoves, player,  position) != 1) break;
         }
 
         current_row = row;
@@ -207,7 +205,7 @@ public class BasicChessEngine
         {
             current_row -= 1;
             current_column -= 1;
-            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
         current_row = row;
@@ -217,7 +215,7 @@ public class BasicChessEngine
         {
             current_row += 1;
             current_column -= 1;
-            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
         current_row = row;
@@ -227,12 +225,12 @@ public class BasicChessEngine
         {
             current_row -= 1;
             current_column += 1;
-            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, current_column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
     }
 
-    public void Lshape(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
+    public void Lshape(int row, int column, ref List<Tuple<int, int>> moves,ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
         var Captures = new List<int>();
         var noCapture = new List<int>();
@@ -240,55 +238,55 @@ public class BasicChessEngine
         // add one to column and one to row
 
         {
-            CheckIfValidAndUpdate(row + 1, column + 2, ref moves, player, position);
+            CheckIfValidAndUpdate(row + 1, column + 2, ref moves, ref CapturedMoves,player, position);
         }
 
         {
-            CheckIfValidAndUpdate(row - 1, column + 2, ref moves, player, position);
+            CheckIfValidAndUpdate(row - 1, column + 2, ref moves, ref CapturedMoves,player, position);
         }
         {
-            CheckIfValidAndUpdate(row - 1, column - 2, ref moves, player, position);
+            CheckIfValidAndUpdate(row - 1, column - 2, ref moves, ref CapturedMoves,player, position);
 
         }
         {
-            CheckIfValidAndUpdate(row + 1, column - 2, ref moves, player, position);
-
-        }
-
-        {
-            CheckIfValidAndUpdate(row + 2, column + 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row + 1, column - 2, ref moves, ref CapturedMoves,player, position);
 
         }
 
         {
-            CheckIfValidAndUpdate(row + 2, column - 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row + 2, column + 1, ref moves, ref CapturedMoves,player, position);
 
         }
 
         {
-            CheckIfValidAndUpdate(row - 2, column + 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row + 2, column - 1, ref moves, ref CapturedMoves,player, position);
 
         }
 
         {
-            CheckIfValidAndUpdate(row - 2, column - 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row - 2, column + 1, ref moves, ref CapturedMoves,player, position);
+
+        }
+
+        {
+            CheckIfValidAndUpdate(row - 2, column - 1, ref moves, ref CapturedMoves,player, position);
         }
 
     }
 
-    public void BoxAround(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
+    public void BoxAround(int row, int column, ref List<Tuple<int, int>> moves, ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
-        CheckIfValidAndUpdate(row + 1, column, ref moves, player, position);
-        CheckIfValidAndUpdate(row + 1, column + 1, ref moves, player, position);
-        CheckIfValidAndUpdate(row + 1, column - 1, ref moves, player, position);
-        CheckIfValidAndUpdate(row - 1, column, ref moves, player, position);
-        CheckIfValidAndUpdate(row - 1, column + 1, ref moves, player, position);
-        CheckIfValidAndUpdate(row - 1, column - 1, ref moves, player, position);
-        CheckIfValidAndUpdate(row, column + 1, ref moves, player, position);
-        CheckIfValidAndUpdate(row, column - 1, ref moves, player, position);
+        CheckIfValidAndUpdate(row + 1, column, ref moves, ref CapturedMoves,player, position);
+        CheckIfValidAndUpdate(row + 1, column + 1, ref moves, ref CapturedMoves,player, position);
+        CheckIfValidAndUpdate(row + 1, column - 1, ref moves, ref CapturedMoves,player, position);
+        CheckIfValidAndUpdate(row - 1, column, ref moves,ref CapturedMoves, player, position);
+        CheckIfValidAndUpdate(row - 1, column + 1, ref moves,ref CapturedMoves, player, position);
+        CheckIfValidAndUpdate(row - 1, column - 1, ref moves, ref CapturedMoves,player, position);
+        CheckIfValidAndUpdate(row, column + 1, ref moves,ref CapturedMoves, player, position);
+        CheckIfValidAndUpdate(row, column - 1, ref moves, ref CapturedMoves,player, position);
     }
 
-    public void Straight(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
+    public void Straight(int row, int column, ref List<Tuple<int, int>> moves, ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
         var Captures = new List<int>();
         var noCapture = new List<int>();
@@ -301,7 +299,7 @@ public class BasicChessEngine
         {
             // going down
             current_row += 1;
-            if (CheckIfValidAndUpdate(current_row, column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
         current_row = row;
@@ -312,7 +310,7 @@ public class BasicChessEngine
         {
             // going up
             current_row -= 1;
-            if (CheckIfValidAndUpdate(current_row, column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(current_row, column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
         current_column = column;
@@ -320,7 +318,7 @@ public class BasicChessEngine
         {
             // going left
             current_column -= 1;
-            if (CheckIfValidAndUpdate(row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(row, current_column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
         current_column = column;
@@ -328,17 +326,17 @@ public class BasicChessEngine
         {
             // then go right
             current_column += 1;
-            if (CheckIfValidAndUpdate(row, current_column, ref moves, player, position) != 1) break;
+            if (CheckIfValidAndUpdate(row, current_column, ref moves, ref CapturedMoves,player, position) != 1) break;
         }
 
     }
 
-    public void PawnMove(int row, int column, ref List<Tuple<int, int>> moves, int player, int position)
+    public void PawnMove(int row, int column, ref List<Tuple<int, int>> moves, ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
         // we can always check if the + 1 is a valid move
         if (BoardRepresentation[((row - player)) * 8 + column] == 0)
         {
-            CheckIfValidAndUpdate(row - player, column, ref moves, player, position);
+            CheckIfValidAndUpdate(row - player, column, ref moves, ref CapturedMoves,player, position);
         }
         // remember that white is 1 and black is -1 
         // white is going up
@@ -346,7 +344,7 @@ public class BasicChessEngine
         // we can then check if we are at the starting row
         if ((player == 1 && row == 6 && BoardRepresentation[((4) * 8) + column ] == 0) || (player == -1 && row == 1 && BoardRepresentation[((3) * 8) + column ] == 0))
         {
-            CheckIfValidAndUpdate(row - (2 * player), column, ref moves, player, position);
+            CheckIfValidAndUpdate(row - (2 * player), column, ref moves, ref CapturedMoves,player, position);
         }
         // covers the case where we are on the starting row
 
@@ -354,12 +352,12 @@ public class BasicChessEngine
 
         if (column < 7 && BoardRepresentation[((row - player) * 8) + column + 1] != 0)
         {
-            CheckIfValidAndUpdate(row - player, column + 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row - player, column + 1, ref moves, ref CapturedMoves,player, position);
         }
 
         if (column > 0 && BoardRepresentation[((row - player) * 8) + column - 1] != 0)
         {
-            CheckIfValidAndUpdate(row - player, column + 1, ref moves, player, position);
+            CheckIfValidAndUpdate(row - player, column + 1, ref moves, ref CapturedMoves,player, position);
         }
         // no enpassant // It would be a pain to keep track of who just moved twice
     }
@@ -392,28 +390,28 @@ public class BasicChessEngine
             switch (Math.Abs(value))
             {
                 case 1:
-                    if (value >= 0) total += (PawnTable[position] * value) ;
-                    else total += (PawnTable[63 -position] * value);
+                    if (value >= 0) total += (PawnTable[0] * value) ;
+                    else total += (PawnTable[0] * value);
                     break;
                 case 3:
-                    if (value >= 0) total += (BishopTable[position] * value) ;
-                    else total += (BishopTable[63 -position] * (value / 1.5));
+                    if (value >= 0) total += (BishopTable[0] * value) ;
+                    else total += (BishopTable[0] * (value / 1.5));
                     break;
                 case 3.25:
-                    if (value >= 0) total += (KnightTable[position] * value) ;
-                    else total += (KnightTable[63 -position] * (value / 1.5));
+                    if (value >= 0) total += (KnightTable[0] * value) ;
+                    else total += (KnightTable[0] * (value / 1.5));
                     break;
                 case 5:
-                    if (value >= 0) total += (RookTable[position] * value) ;
-                    else total += (RookTable[63 - position] * (value / 3.5));
+                    if (value >= 0) total += (RookTable[0] * value) ;
+                    else total += (RookTable[0] * (value / 3.5));
                     break; 
                 case 9:
-                    if (value >= 0) total += (QueenTable[position] * value) ;
-                    else total += (QueenTable[ 63 -position] *( value / 5));
+                    if (value >= 0) total += (QueenTable[0] * value) ;
+                    else total += (QueenTable[0] *( value / 5));
                     break;
                 case 15:
-                    if (value >= 0) total += (KingTable[position] * value) ;
-                    else total += (KingTable[63 -position] * (value / 8));
+                    if (value >= 0) total += (KingTable[0] * value) ;
+                    else total += (KingTable[0] * (value / 8));
                     break;
             }
         }
@@ -423,9 +421,16 @@ public class BasicChessEngine
 
     public double DepthSearch(int player, int original_player, int depth, double alpha, double beta)
     {
-        if (depth == 0)
+        var MoveSet = NextMoves(player);
+        var MovesToMake = MoveSet[0];
+        if (depth <= 0 && MovesToMake.Count == 0)
         {
             return EvaluatePosition(player);
+        }
+
+        if (depth > 0)
+        {
+            MovesToMake.AddRange(MoveSet[1]);
         }
         {
             
@@ -439,7 +444,7 @@ public class BasicChessEngine
             // set tbe best move to nothing at the start
             double maxmimizing_score = int.MinValue;
             double minimizing_score = int.MinValue;
-            foreach (var move in NextMoves(player))
+            foreach (var move in MovesToMake)
             {
                 var save_space = BoardRepresentation[move.Item1];
                 // we save the peice in the starting board
