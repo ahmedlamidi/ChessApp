@@ -29,81 +29,84 @@ public class BasicChessEngine
         Queen = 9, 
         King = 15
     }
-      public static readonly List<int> PawnTable = new List<int>
-      {
-          1,  1,  1,  1,  1,  1,  1,  1,
-          6, 11, 11,  1,  1, 11, 11,  6,
-          6,  1,  1,  5,  5,  1,  1,  6,
-          1,  1,  1, 21, 21,  1,  1,  1,
-          6,  6, 11, 26, 26, 11,  6,  6,
-          11, 11, 21, 31, 31, 21, 11, 11,
-          51, 51, 51, 51, 51, 51, 51, 51,
-          1,  1,  1,  1,  1,  1,  1,  1
-      };
-
-
-    public static readonly List<int> KnightTable = new List<int>
+    List<double> PawnTable = new List<double>
     {
-        1,  1,  1,  1,  1,  1,  1,  1,
-        1, 21, 31, 31, 31, 31, 21,  1,
-        1, 31, 41, 46, 46, 41, 31,  1,
-        1, 26, 46, 51, 51, 46, 26,  1,
-        1, 31, 46, 51, 51, 46, 31,  1,
-        1, 26, 41, 46, 46, 41, 26,  1,
-        1, 21, 31, 36, 36, 31, 21,  1,
-        1,  1,  1,  1,  1,  1,  1,  1
+        1.00, 1.02, 1.04, 1.06, 1.06, 1.04, 1.02, 1.00,
+        1.03, 1.05, 1.07, 1.09, 1.09, 1.07, 1.05, 1.03,
+        1.04, 1.06, 1.08, 1.08, 1.08, 1.08, 1.06, 1.04,
+        1.05, 1.07, 1.09, 1.09, 1.09, 1.09, 1.07, 1.05,
+        1.06, 1.08, 1.09, 1.09, 1.09, 1.09, 1.08, 1.06,
+        1.07, 1.09, 1.09, 1.09, 1.09, 1.09, 1.09, 1.07,
+        1.08, 1.09, 1.09, 1.09, 1.09, 1.09, 1.09, 1.08,
+        1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00
     };
 
 
-    public static readonly List<int> BishopTable = new List<int>
+    List<double> KnightTable = new List<double>
     {
-        1,  1,  1,  1,  1,  1,  1,  1,
-        1, 21, 21, 21, 21, 21, 21,  1,
-        1, 21, 26, 31, 31, 26, 21,  1,
-        1, 26, 26, 31, 31, 26, 26,  1,
-        1, 21, 31, 31, 31, 31, 21,  1,
-        1, 31, 31, 31, 31, 31, 31,  1,
-        1, 26, 21, 21, 21, 21, 26,  1,
-        1,  1,  1,  1,  1,  1,  1,  1
-    };
-
-    public static readonly List<int> RookTable = new List<int>
-    {
-        1,  1,  1,  6,  6,  1,  1,  1,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        11, 21, 21, 21, 21, 21, 21, 11,
-        1,  1,  1,  1,  1,  1,  1,  1
+        1.02, 1.03, 1.05, 1.05, 1.05, 1.05, 1.03, 1.02,
+        1.03, 1.06, 1.07, 1.07, 1.07, 1.07, 1.06, 1.03,
+        1.05, 1.07, 1.09, 1.09, 1.09, 1.09, 1.07, 1.05,
+        1.05, 1.07, 1.09, 1.09, 1.09, 1.09, 1.07, 1.05,
+        1.05, 1.07, 1.09, 1.09, 1.09, 1.09, 1.07, 1.05,
+        1.05, 1.07, 1.09, 1.08, 1.08, 1.09, 1.07, 1.05,
+        1.03, 1.06, 1.07, 1.07, 1.07, 1.07, 1.06, 1.03,
+        1.02, 1.03, 1.05, 1.05, 1.05, 1.05, 1.03, 1.02
     };
 
 
-    public static readonly List<int> QueenTable = new List<int>
+    List<double> BishopTable = new List<double>
     {
-        1,  1,  1,  6,  6,  1,  1,  1,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        6, 11, 16, 16, 16, 16, 11,  6,
-        11, 11, 16, 16, 16, 16, 11,  6,
-        11, 11, 16, 16, 16, 16, 11,  6,
-        6, 11, 16, 16, 16, 16, 11,  6,
-        6, 11, 11, 11, 11, 11, 11,  6,
-        1,  1,  1,  6,  6,  1,  1,  1
+        1.03, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.03,
+        1.05, 1.07, 1.08, 1.08, 1.08, 1.08, 1.07, 1.05,
+        1.05, 1.08, 1.09, 1.09, 1.09, 1.09, 1.08, 1.05,
+        1.05, 1.08, 1.09, 1.09, 1.09, 1.09, 1.08, 1.05,
+        1.05, 1.08, 1.09, 1.09, 1.09, 1.09, 1.08, 1.05,
+        1.05, 1.07, 1.08, 1.08, 1.08, 1.08, 1.07, 1.05,
+        1.03, 1.05, 1.07, 1.07, 1.07, 1.07, 1.05, 1.03,
+        1.02, 1.03, 1.05, 1.05, 1.05, 1.05, 1.03, 1.02
     };
 
 
-    public static readonly List<int> KingTable = new List<int>
+    List<double> RookTable = new List<double>
     {
-        11,  1,  1,  1,  1,  1,  1, 11,
-        11, 21, 21,  1,  1, 21, 21, 11,
-        11, 21, 21,  1,  1, 21, 21, 11,
-        11, 21, 21,  1,  1, 21, 21, 11,
-        11, 21, 21,  1,  1, 21, 21, 11,
-        11, 21, 21, 21, 21, 21, 21, 11,
-        11, 31, 31, 31, 31, 31, 31, 11,
-        21, 31, 21, 11, 11, 21, 31, 21
+        1.06, 1.06, 1.06, 1.06, 1.06, 1.06, 1.06, 1.06,
+        1.07, 1.08, 1.08, 1.08, 1.08, 1.08, 1.08, 1.07,
+        1.06, 1.07, 1.07, 1.07, 1.07, 1.07, 1.07, 1.06,
+        1.06, 1.07, 1.07, 1.07, 1.07, 1.07, 1.07, 1.06,
+        1.06, 1.07, 1.07, 1.07, 1.07, 1.07, 1.07, 1.06,
+        1.06, 1.07, 1.07, 1.07, 1.07, 1.07, 1.07, 1.06,
+        1.07, 1.08, 1.08, 1.08, 1.08, 1.08, 1.08, 1.07,
+        1.06, 1.06, 1.06, 1.06, 1.06, 1.06, 1.06, 1.06
     };
+
+
+    List<double> QueenTable = new List<double>
+    {
+        1.05, 1.06, 1.06, 1.07, 1.07, 1.06, 1.06, 1.05,
+        1.06, 1.07, 1.07, 1.08, 1.08, 1.07, 1.07, 1.06,
+        1.06, 1.07, 1.08, 1.08, 1.08, 1.08, 1.07, 1.06,
+        1.07, 1.08, 1.08, 1.09, 1.09, 1.08, 1.08, 1.07,
+        1.07, 1.08, 1.08, 1.09, 1.09, 1.08, 1.08, 1.07,
+        1.06, 1.07, 1.08, 1.08, 1.08, 1.08, 1.07, 1.06,
+        1.06, 1.07, 1.07, 1.08, 1.08, 1.07, 1.07, 1.06,
+        1.05, 1.06, 1.06, 1.07, 1.07, 1.06, 1.06, 1.05
+    };
+
+
+
+    List<double> KingTable = new List<double>
+    {
+        1.07, 1.08, 1.08, 1.09, 1.09, 1.08, 1.08, 1.07,
+        1.06, 1.07, 1.07, 1.08, 1.08, 1.07, 1.07, 1.06,
+        1.05, 1.06, 1.06, 1.07, 1.07, 1.06, 1.06, 1.05,
+        1.04, 1.05, 1.05, 1.06, 1.06, 1.05, 1.05, 1.04,
+        1.03, 1.04, 1.04, 1.05, 1.05, 1.04, 1.04, 1.03,
+        1.02, 1.03, 1.03, 1.04, 1.04, 1.03, 1.03, 1.02,
+        1.01, 1.02, 1.02, 1.03, 1.03, 1.02, 1.02, 1.01,
+        1.00, 1.01, 1.01, 1.02, 1.02, 1.01, 1.01, 1.00
+    };
+
 
     public List<List<Tuple<int, int>>> NextMoves(int player)
     {
@@ -334,7 +337,7 @@ public class BasicChessEngine
     public void PawnMove(int row, int column, ref List<Tuple<int, int>> moves, ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
         // we can always check if the + 1 is a valid move
-        if (BoardRepresentation[((row - player)) * 8 + column] == 0)
+        if (row < 7 && row > 0 && BoardRepresentation[((row - player)) * 8 + column] == 0)
         {
             CheckIfValidAndUpdate(row - player, column, ref moves, ref CapturedMoves,player, position);
         }
@@ -350,12 +353,12 @@ public class BasicChessEngine
 
         // if we have someone on the front right or front left, we can check that too
 
-        if (column < 7 && BoardRepresentation[((row - player) * 8) + column + 1] != 0)
+        if (row < 7 && row > 0 && column < 7 && BoardRepresentation[((row - player) * 8) + column + 1] != 0)
         {
             CheckIfValidAndUpdate(row - player, column + 1, ref moves, ref CapturedMoves,player, position);
         }
 
-        if (column > 0 && BoardRepresentation[((row - player) * 8) + column - 1] != 0)
+        if (row < 7 && row > 0 && column > 0 && BoardRepresentation[((row - player) * 8) + column - 1] != 0)
         {
             CheckIfValidAndUpdate(row - player, column + 1, ref moves, ref CapturedMoves,player, position);
         }
@@ -390,28 +393,28 @@ public class BasicChessEngine
             switch (Math.Abs(value))
             {
                 case 1:
-                    if (value >= 0) total += (PawnTable[0] * value) ;
-                    else total += (PawnTable[0] * value);
+                    if (value >= 0) total += (PawnTable[position] * value) ;
+                    else total += (PawnTable[63 - position] * value);
                     break;
                 case 3:
-                    if (value >= 0) total += (BishopTable[0] * value) ;
-                    else total += (BishopTable[0] * (value / 1.5));
+                    if (value >= 0) total += (BishopTable[position] * value) ;
+                    else total += (BishopTable[63 - position] * value);
                     break;
                 case 3.25:
-                    if (value >= 0) total += (KnightTable[0] * value) ;
-                    else total += (KnightTable[0] * (value / 1.5));
+                    if (value >= 0) total += (KnightTable[position] * value) ;
+                    else total += (KnightTable[63 - position]);
                     break;
                 case 5:
-                    if (value >= 0) total += (RookTable[0] * value) ;
-                    else total += (RookTable[0] * (value / 3.5));
+                    if (value >= 0) total += (RookTable[position] * value) ;
+                    else total += (RookTable[63 - position] );
                     break; 
                 case 9:
-                    if (value >= 0) total += (QueenTable[0] * value) ;
-                    else total += (QueenTable[0] *( value / 5));
+                    if (value >= 0) total += (QueenTable[position] * value) ;
+                    else total += (QueenTable[63 - position]);
                     break;
                 case 15:
-                    if (value >= 0) total += (KingTable[0] * value) ;
-                    else total += (KingTable[0] * (value / 8));
+                    if (value >= 0) total += (KingTable[position] * value) ;
+                    else total += (KingTable[63 - position]);
                     break;
             }
         }
@@ -423,7 +426,8 @@ public class BasicChessEngine
     {
         var MoveSet = NextMoves(player);
         var MovesToMake = MoveSet[0];
-        if (depth <= 0 && MovesToMake.Count == 0)
+        if ((depth <= 0 && MovesToMake.Count == 0) ||(depth <= -5))
+            // quiescence search goes too deep , if if not kept to a certain level
         {
             return EvaluatePosition(player);
         }
@@ -443,7 +447,7 @@ public class BasicChessEngine
             
             // set tbe best move to nothing at the start
             double maxmimizing_score = int.MinValue;
-            double minimizing_score = int.MinValue;
+            double minimizing_score = int.MaxValue;
             foreach (var move in MovesToMake)
             {
                 var save_space = BoardRepresentation[move.Item1];

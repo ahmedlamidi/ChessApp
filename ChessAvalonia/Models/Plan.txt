@@ -1,0 +1,14 @@
+Things to consider -
+
+Need to prioritize capturing
+- The positional play should just be to resolve conflicts
+- it should never be better to move to a square than to win a trade
+- the values have to be less than the ratio of queen to pawn so less than 0.10
+- I can try -
+    bad spot - 1.00
+    Decent spot - 1.05
+    Good spot - 1.09
+positional play
+how many moves to actually get to that desired position 
+
+the numbers should work to prioritize in this order
