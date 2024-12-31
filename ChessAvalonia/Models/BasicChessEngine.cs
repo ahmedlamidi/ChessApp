@@ -462,8 +462,8 @@ public class BasicChessEngine
                 BoardRepresentation[move.Item2] = 0;
                 var next_level = new BasicChessEngine(BoardRepresentation);
                 var score = next_level.EvaluatePosition(player);
-                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta, (cumulative * 1.25) + score);
-                // the cumulative makes it favor better positions now
+                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta, (cumulative * 1.10) + score);
+                // the cumulative makes it favor better positions now // keep at 1.10 best balance
                 BoardRepresentation[move.Item2] = BoardRepresentation[move.Item1];
                 BoardRepresentation[move.Item1] = save_space;
                 if (player != original_player) // maximizing
