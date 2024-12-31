@@ -400,19 +400,19 @@ public class BasicChessEngine
                     break;
                 case 3.25:
                     if (value >= 0) total += (KnightTable[position] * value) ;
-                    else total += (KnightTable[63 - position]);
+                    else total += (KnightTable[63 - position]* value);
                     break;
                 case 5:
                     if (value >= 0) total += (RookTable[position] * value) ;
-                    else total += (RookTable[63 - position] );
+                    else total += (RookTable[63 - position] * value);
                     break; 
                 case 9:
                     if (value >= 0) total += (QueenTable[position] * value) ;
-                    else total += (QueenTable[63 - position]);
+                    else total += (QueenTable[63 - position] * value);
                     break;
                 case 20:
                     if (value >= 0) total += (KingTable[position] * value) ;
-                    else total += (KingTable[63 - position]);
+                    else total += (KingTable[63 - position] * value);
                     break;
             }
         }
@@ -462,7 +462,7 @@ public class BasicChessEngine
                 BoardRepresentation[move.Item2] = 0;
                 var next_level = new BasicChessEngine(BoardRepresentation);
                 var score = next_level.EvaluatePosition(player);
-                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta, (cumulative * 1.30) + score);
+                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta, (cumulative * 1.25) + score);
                 // the cumulative makes it favor better positions now
                 BoardRepresentation[move.Item2] = BoardRepresentation[move.Item1];
                 BoardRepresentation[move.Item1] = save_space;
