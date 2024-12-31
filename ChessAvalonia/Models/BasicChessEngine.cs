@@ -97,14 +97,14 @@ public class BasicChessEngine
 
     List<double> KingTable = new List<double>
     {
-        1.07, 1.08, 1.08, 1.09, 1.09, 1.08, 1.08, 1.07,
-        1.06, 1.07, 1.07, 1.08, 1.08, 1.07, 1.07, 1.06,
-        1.05, 1.06, 1.06, 1.07, 1.07, 1.06, 1.06, 1.05,
-        1.04, 1.05, 1.05, 1.06, 1.06, 1.05, 1.05, 1.04,
-        1.03, 1.04, 1.04, 1.05, 1.05, 1.04, 1.04, 1.03,
-        1.02, 1.03, 1.03, 1.04, 1.04, 1.03, 1.03, 1.02,
-        1.01, 1.02, 1.02, 1.03, 1.03, 1.02, 1.02, 1.01,
-        1.00, 1.01, 1.01, 1.02, 1.02, 1.01, 1.01, 1.00
+        1.09, 1.08, 1.07, 1.06, 1.06, 1.07, 1.08, 1.09,
+        1.08, 1.07, 1.06, 1.05, 1.05, 1.06, 1.07, 1.08,
+        1.07, 1.06, 1.05, 1.04, 1.04, 1.05, 1.06, 1.07,
+        1.06, 1.05, 1.04, 1.03, 1.03, 1.04, 1.05, 1.06,
+        1.06, 1.05, 1.04, 1.03, 1.03, 1.04, 1.05, 1.06,
+        1.07, 1.06, 1.05, 1.04, 1.04, 1.05, 1.06, 1.07,
+        1.08, 1.07, 1.06, 1.05, 1.05, 1.06, 1.07, 1.08,
+        1.09, 1.08, 1.07, 1.06, 1.06, 1.07, 1.08, 1.09
     };
 
 
@@ -148,7 +148,7 @@ public class BasicChessEngine
                         Diagonal(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         Straight(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         break;
-                    case 15:
+                    case 20:
                         // all the moves for the king
                         BoxAround(position / 8, position % 8, ref Moves, ref CapturedMoves,  player, position);
                         break;
@@ -235,8 +235,6 @@ public class BasicChessEngine
 
     public void Lshape(int row, int column, ref List<Tuple<int, int>> moves,ref List<Tuple<int, int>> CapturedMoves, int player, int position)
     {
-        var Captures = new List<int>();
-        var noCapture = new List<int>();
         // I would first go downward and right
         // add one to column and one to row
 
@@ -360,7 +358,7 @@ public class BasicChessEngine
 
         if (row < 7 && row > 0 && column > 0 && BoardRepresentation[((row - player) * 8) + column - 1] != 0)
         {
-            CheckIfValidAndUpdate(row - player, column + 1, ref moves, ref CapturedMoves,player, position);
+            CheckIfValidAndUpdate(row - player, column - 1, ref moves, ref CapturedMoves,player, position);
         }
         // no enpassant // It would be a pain to keep track of who just moved twice
     }
@@ -368,14 +366,14 @@ public class BasicChessEngine
     public Tuple<int, int> move_to_play {get; set; }
 
     public List<double> BoardRepresentation { get; set; } = new List<double>([
-        -5, -3, -3.25, -9, -15, -3.25, -3, -5,
+        -5, -3, -3.25, -9, -20, -3.25, -3, -5,
         -1, -1, -1, -1, -1, -1, -1, -1,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1,
-        5, 3, 3.25, 9, 15, 3.25, 3, 5
+        5, 3, 3.25, 9, 20, 3.25, 3, 5
     ]);
 
     public double EvaluatePosition(int player)
@@ -412,7 +410,7 @@ public class BasicChessEngine
                     if (value >= 0) total += (QueenTable[position] * value) ;
                     else total += (QueenTable[63 - position]);
                     break;
-                case 15:
+                case 20:
                     if (value >= 0) total += (KingTable[position] * value) ;
                     else total += (KingTable[63 - position]);
                     break;
@@ -422,14 +420,20 @@ public class BasicChessEngine
         // this is the simplest evaluation function
     }
 
-    public double DepthSearch(int player, int original_player, int depth, double alpha, double beta)
+    public double DepthSearch(int player, int original_player, int depth, double alpha, double beta, double cumulative)
     {
         var MoveSet = NextMoves(player);
         var MovesToMake = MoveSet[0];
         if ((depth <= 0 && MovesToMake.Count == 0) ||(depth <= -5))
-            // quiescence search goes too deep , if if not kept to a certain level
+            // quiescence search goes too deep , if not kept to a certain level
+            // got to a recursion level of 21 levels - its chess there is always going to be a way to capture
+            // may be why it does not like pawn captures
         {
-            return EvaluatePosition(player);
+            if (!BoardRepresentation.Contains(20)) return int.MinValue;
+            if (!BoardRepresentation.Contains(-20)) return int.MaxValue;
+            return (EvaluatePosition(player) + cumulative)  / (3 - depth);
+            // the number minus the depth should equal the starting depth
+            // to counter the quiscent search
         }
 
         if (depth > 0)
@@ -457,7 +461,9 @@ public class BasicChessEngine
                 BoardRepresentation[move.Item1] = BoardRepresentation[move.Item2];
                 BoardRepresentation[move.Item2] = 0;
                 var next_level = new BasicChessEngine(BoardRepresentation);
-                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta);
+                var score = next_level.EvaluatePosition(player);
+                var eval = next_level.DepthSearch(player * -1, original_player, depth - 1, alpha, beta, (cumulative * 1.30) + score);
+                // the cumulative makes it favor better positions now
                 BoardRepresentation[move.Item2] = BoardRepresentation[move.Item1];
                 BoardRepresentation[move.Item1] = save_space;
                 if (player != original_player) // maximizing

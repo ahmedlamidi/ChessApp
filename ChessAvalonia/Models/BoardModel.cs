@@ -14,7 +14,7 @@ public class BoardModel
     {
         BasicChessEngine engine = new BasicChessEngine(RepresenttoEngine());
         // starting it from nothing anc creating a new 
-        engine.DepthSearch(-1, -1, 2, int.MinValue, int.MaxValue);
+        engine.DepthSearch(-1, -1, 3, int.MinValue, int.MaxValue, 0);
         // this means I should start a move with black and try to maximize for black
         // with a depth of one
         return engine.move_to_play;
@@ -30,13 +30,13 @@ public class BoardModel
             { "black-Knight", -3 },
             { "black-Bishop", -3.25 },
             { "black-Queen", -9 },
-            { "black-Kings", -15 },
+            { "black-King", -20 },
             { "black-Pawn", -1 },
             { "white-Rook", 5 },
             { "white-Knight", 3 },
             { "white-Bishop", 3.25 },
             { "white-Queen", 9 },
-            { "white-Kings", 15 },
+            { "white-King", 20 },
             { "white-Pawn", 1 },
             { "", 0 } 
         };
@@ -79,15 +79,29 @@ public class BoardModel
                         if (string.IsNullOrEmpty(BoardRepresentation[((row + direction) * 8) + column]))
                         {
                             Moves.Add(((row+ direction) * 8) + column);
+                            if (string.IsNullOrEmpty(BoardRepresentation[((row + (direction * 2)) * 8) + column]))
+                            {
+                                Moves.Add(((row + (direction * 2)) * 8) + column);
+                            }
                         }
 
-                        else if (!String.Equals(BoardRepresentation[((row + direction) * 8) + column].Split("-")[0], square[0],
+                        if ( column < 7 && !String.IsNullOrEmpty(BoardRepresentation[((row + direction) * 8) + (column + 1)]) &&
+                             !String.Equals(BoardRepresentation[((row + direction) * 8) + (column + 1)].Split("-")[0], square[0],
                                 StringComparison.InvariantCultureIgnoreCase))
                             // check if the piece is not the same color as us
                             // if it is not then we can capture it
                             // 
                         {
-                            Captures.Add(((row + direction) * 8) + column);
+                            Captures.Add(((row + direction) * 8) + column + 1);
+                        }
+                        if ( column > 0 && !String.IsNullOrEmpty(BoardRepresentation[((row + direction) * 8) + (column - 1)]) && 
+                             !String.Equals(BoardRepresentation[((row + direction) * 8) + (column - 1)].Split("-")[0], square[0],
+                                StringComparison.InvariantCultureIgnoreCase))
+                            // check if the piece is not the same color as us
+                            // if it is not then we can capture it
+                            // 
+                        {
+                            Captures.Add(((row + direction) * 8) + column - 1);
                         }
                         
                     }
@@ -119,6 +133,12 @@ public class BoardModel
                     Moves = Knight_Possible_move[0];
                     Captures = Knight_Possible_move[1];
                     break;
+                case "King":
+                    var King_Possible_move = BoxAround(row, column, square[0]);
+                    Moves = King_Possible_move[0];
+                    Captures = King_Possible_move[1];
+                    break;
+                    
             }
             return [Moves, Captures];
         }
@@ -266,6 +286,21 @@ public class BoardModel
         return [noCapture, Captures];
     }
     
+    public List<List<int>> BoxAround (int row, int column, string pieceColor)
+    {
+        var Captures = new List<int>();
+        var noCapture = new List<int>();
+        CheckIfValidAndUpdate(row + 1, column, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row + 1, column + 1,pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row + 1, column - 1, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row - 1, column, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row - 1, column + 1, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row - 1, column - 1, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row, column + 1, pieceColor, ref Captures, ref noCapture);
+        CheckIfValidAndUpdate(row, column - 1, pieceColor, ref Captures, ref noCapture);
+        return [noCapture, Captures];
+    }
+    
     
     /*
      * Return 0 if not in valid range
@@ -303,14 +338,14 @@ public class BoardModel
         {
             BoardRepresentation = boardRepresentation = new List<string>
             {
-                "black-Rook", "black-Knight", "black-Bishop", "black-Queen", "black-Kings", "black-Bishop", "black-Knight", "black-Rook",
+                "black-Rook", "black-Knight", "black-Bishop", "black-Queen", "black-King", "black-Bishop", "black-Knight", "black-Rook",
                 "black-Pawn", "black-Pawn", "black-Pawn", "black-Pawn", "black-Pawn", "black-Pawn", "black-Pawn", "black-Pawn",
                 "", "", "", "", "", "", "", "",
                 "", "", "", "", "", "", "", "",
                 "", "", "", "", "", "", "", "",
                 "", "", "", "", "", "", "", "",
                 "white-Pawn", "white-Pawn", "white-Pawn", "white-Pawn", "white-Pawn", "white-Pawn", "white-Pawn", "white-Pawn",
-                "white-Rook", "white-Knight", "white-Bishop", "white-Queen", "white-Kings", "white-Bishop", "white-Knight", "white-Rook"
+                "white-Rook", "white-Knight", "white-Bishop", "white-Queen", "white-King", "white-Bishop", "white-Knight", "white-Rook"
             };
         }
         else

@@ -9,6 +9,16 @@ Need to prioritize capturing
     Decent spot - 1.05
     Good spot - 1.09
 positional play
+
 how many moves to actually get to that desired position 
+- It should prioritize sooner benefits
+- unless the benefit of the later one is that much better
+- should also be less than a bishop
+- can leave a free pawn to get better - but should still look to gain material advantage in the short term
+- if the long term loss is not too much
+- how to make it that it also sees for the other party 
+- each decision should be a factor of how likely we are to get to that branch
+- can be depth only - could also look to increase the weighting if it is one of the optimal branches found so far
+
 
 the numbers should work to prioritize in this order
