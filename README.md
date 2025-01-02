@@ -1,6 +1,3 @@
-
-Here's the updated README with the chess bot details:
-
 ChessApp
 A chess application built with C# using Rider and Avalonia, leveraging the power of the MVVM design pattern through ReactiveUI. 
 The app provides a smooth and intuitive user interface to play chess, with features like board display, piece movement, and more. 
